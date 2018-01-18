@@ -350,7 +350,7 @@ class report_capcsd {
   	  break;
   	  	
   	  case 'general':
-  	  	$quiz_criteria = "";
+  	  	$quiz_criteria = " and q.id = :quiz_id ";
   	  	$aaa_criteria = "";
   	  	$asha_criteria = "";  	  	
   	  	$query = str_replace("<QUIZ_CRITERIA>",$quiz_criteria,$base_query);

@@ -399,7 +399,7 @@ class report_capcsd {
   	  	$r = 2;
   	  	foreach ($data as $d) {
   	  	  $myxls->write_string($r, 0, 'P1');
-  	  	  $myxls->write_string($r, 1, $d->lastname . ' ' . $d->firstname);
+  	  	  $myxls->write_string($r, 1, $d->lastname);
   	  	  $myxls->write_string($r, 2, '');
   	  	  $myxls->write_string($r, 3, $d->asha);
   	  	  $r++;

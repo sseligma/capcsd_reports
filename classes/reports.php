@@ -104,11 +104,11 @@ class report_capcsd {
     }
     
     if (isset($options->start_date)) {
-      $this->start_date = $options->start_date;
+      $this->start_date = (int)$options->start_date;
     }
     
     if (isset($options->end_date)) {
-      $this->end_date = $options->end_date;
+      $this->end_date = (int)$options->end_date + 86399; // 11:59PM
     }
     
     if (isset($options->pass_fail_percentage)) {
@@ -323,7 +323,7 @@ class report_capcsd {
   	  'end_date' => $this->end_date,
   	  'pass_fail_percentage' => (int) $this->pass_fail_percentage		
   	);
-  	
+
   	switch ($type) {
   	  case 'asha':
   	  	$quiz_criteria = " and q.id = :quiz_id ";  
@@ -350,13 +350,16 @@ class report_capcsd {
   	  break;
   	  	
   	  case 'general':
-  	  	$quiz_criteria = " and q.id = :quiz_id ";
+               $params = $base_params;
+                if ($this->quiz_id != '_none') {
+  	  	  $quiz_criteria = " and q.id = :quiz_id ";
+                  $params['quiz_id'] = $this->quiz_id;
+                }
   	  	$aaa_criteria = "";
   	  	$asha_criteria = "";  	  	
   	  	$query = str_replace("<QUIZ_CRITERIA>",$quiz_criteria,$base_query);
   	  	$query = str_replace("<AAA_CRITERIA>",$aaa_criteria,$query);
   	  	$query = str_replace("<ASHA_CRITERIA>",$asha_criteria,$query);
-  	  	$params = $base_params;
   	  	return (array('query' => $query, 'params' => $params));
   	  break;
   	  	

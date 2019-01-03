@@ -334,8 +334,11 @@ class report_capcsd {
   	  'pass_fail_percentage' => (int) $this->pass_fail_percentage		
   	);
 
+<<<<<<< HEAD
   	$quiz_criteria = "";
   	
+=======
+>>>>>>> 71f8ef32a31398a41f54692857d336adccbf0b16
   	switch ($type) {
   	  case 'asha':
   	  	$quiz_criteria = " and q.id = :quiz_id ";  

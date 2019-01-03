@@ -104,11 +104,11 @@ class report_capcsd {
     }
     
     if (isset($options->start_date)) {
-      $this->start_date = $options->start_date;
+      $this->start_date = (int)$options->start_date;
     }
     
     if (isset($options->end_date)) {
-      $this->end_date = $options->end_date;
+      $this->end_date = (int)$options->end_date + 86399; // 11:59PM
     }
     
     if (isset($options->pass_fail_percentage)) {
@@ -158,10 +158,10 @@ class report_capcsd {
       break;
      
       case 'general':
-      	$table->head = array('Customer Name','ASHA ID','AAA ID','Address1','Address2','Address3','City','State','ZIP','Country','Primary Phone','Email','Module','Grade','Date');
+      	$table->head = array('Customer Name','ASHA ID','AAA ID','Address1','Address2','Address3','City','State','ZIP','Country','Primary Phone','Email','Module','Grade','Date','Profession','Other_Profession','Institution1','Institution2','Institution3');
       	
       	foreach ($data as $d) {
-      		$table->data[] = array($d->lastname . ' ' . $d->firstname, $d->asha, $d->aaa,$d->address1, $d->address2, $d->address3,$d->city, $d->state, $d->zip, $d->country, $d->phone1,$d->email,$d->module,$d->grade_percentage,$d->time_completed);
+      		$table->data[] = array($d->lastname . ' ' . $d->firstname, $d->asha, $d->aaa,$d->address1, $d->address2, $d->address3,$d->city, $d->state, $d->zip, $d->country, $d->phone1,$d->email,$d->module,$d->grade_percentage,$d->time_completed,$d->profession,$d->other_profession,$d->institution1,$d->institution2,$d->institution3);
       	}
       	return $table;
       break;
@@ -230,6 +230,11 @@ class report_capcsd {
     user.country,
     user.asha,
     user.aaa,
+    user.profession,
+    user.other_profession,
+    user.institution1,
+    user.institution2,
+    user.institution3,
     section.module,
     q.grade,
   	round(( (g.grade /q.grade) * 100),0) as grade_percentage,
@@ -274,7 +279,12 @@ class report_capcsd {
       max(if(f.shortname = 'zip',d.data,'')) as zip,
       u.country,
       max(if(f.shortname = 'ASHA',d.data,'')) as asha,
-      max(if(f.shortname = 'AAA',d.data,'')) as aaa
+      max(if(f.shortname = 'AAA',d.data,'')) as aaa,
+      max(if(f.shortname = 'Profession',d.data,'')) as profession,
+      max(if(f.shortname = 'Other',d.data,'')) as other_profession,
+      max(if(f.shortname = 'Institution',d.data,'')) as institution1,
+      max(if(f.shortname = 'Institution2',d.data,'')) as institution2,
+      max(if(f.shortname = 'Institution3',d.data,'')) as institution3
       from
       {user} u
       left join {user_info_data} d on u.id = d.userid
@@ -323,6 +333,8 @@ class report_capcsd {
   	  'end_date' => $this->end_date,
   	  'pass_fail_percentage' => (int) $this->pass_fail_percentage		
   	);
+
+  	$quiz_criteria = "";
   	
   	switch ($type) {
   	  case 'asha':
@@ -350,13 +362,16 @@ class report_capcsd {
   	  break;
   	  	
   	  case 'general':
-  	  	$quiz_criteria = " and q.id = :quiz_id ";
+               $params = $base_params;
+                if ($this->quiz_id != '_none') {
+  	  	  $quiz_criteria = " and q.id = :quiz_id ";
+                  $params['quiz_id'] = $this->quiz_id;
+                }
   	  	$aaa_criteria = "";
   	  	$asha_criteria = "";  	  	
   	  	$query = str_replace("<QUIZ_CRITERIA>",$quiz_criteria,$base_query);
   	  	$query = str_replace("<AAA_CRITERIA>",$aaa_criteria,$query);
   	  	$query = str_replace("<ASHA_CRITERIA>",$asha_criteria,$query);
-  	  	$params = $base_params;
   	  	return (array('query' => $query, 'params' => $params));
   	  break;
   	  	
@@ -565,7 +580,7 @@ class report_capcsd {
   	  	// Adding the worksheet
   	  	$myxls = $workbook->add_worksheet('General Report');
   	  	
-  	  	$fields = array('Customer_Name','ASHA_ID','AAA_ID','Address1','Address2','Address3','City','State','ZIP','Country','Primary_Phone','Email','Module','Grade','Date');
+  	  	$fields = array('Customer_Name','ASHA_ID','AAA_ID','Address1','Address2','Address3','City','State','ZIP','Country','Primary_Phone','Email','Module','Grade','Date','Profession','Other_Profession','Institution1','Institution2','Institution3');
   	  	
   	  	// Row 0
   	  	foreach ($fields as $key => $f) {
@@ -590,6 +605,11 @@ class report_capcsd {
   	  		$myxls->write_string($r, 12, $d->module);
   	  		$myxls->write_string($r, 13, $d->grade_percentage);
   	  		$myxls->write_string($r, 14, $d->time_completed);
+  	  		$myxls->write_string($r, 15, $d->profession);
+  	  		$myxls->write_string($r, 16, $d->other_profession);
+  	  		$myxls->write_string($r, 17, $d->institution1);
+  	  		$myxls->write_string($r, 18, $d->institution2);
+  	  		$myxls->write_string($r, 19, $d->institution3);
   	  		$r++;
   	  	}
   	  	

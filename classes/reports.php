@@ -108,7 +108,12 @@ class report_capcsd {
     }
     
     if (isset($options->end_date)) {
-      $this->end_date = (int)$options->end_date + 86399; // 11:59PM
+      //$this->end_date = (int)$options->end_date + 86399; // 11:59PM
+      $this->end_date = (int)$options->end_date;	
+      $d = new DateTime();
+      $d->setTimestamp($this->end_date);
+      $d->add(new DateInterval('P1D'));
+      $this->end_date = $d->getTimestamp();      
     }
     
     if (isset($options->pass_fail_percentage)) {
@@ -317,7 +322,7 @@ class report_capcsd {
     ) section on q.id = section.quiz_id
     where
   	g.timemodified >= :start_date
-    and g.timemodified <= :end_date
+    and g.timemodified < :end_date
     <QUIZ_CRITERIA>
     <AAA_CRITERIA>
     <ASHA_CRITERIA> 

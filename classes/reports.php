@@ -338,7 +338,7 @@ class report_capcsd {
   	  'end_date' => $this->end_date,
   	  'pass_fail_percentage' => (int) $this->pass_fail_percentage		
   	);
-
+  	
   	$quiz_criteria = "";
   	
   	switch ($type) {

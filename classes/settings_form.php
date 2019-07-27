@@ -46,9 +46,9 @@ class report_capcsd_settings_form extends moodleform {
     	
     	$mform->addElement('header', 'displayinfo', 'Report Settings');    	
     	$mform->addElement('select', 'report_type', 'Report Type', $report_types);
-    	$mform->addElement('date_selector', 'start_date', get_string('start_date','report_capcsd'));
+    	$mform->addElement('date_selector', 'start_date', get_string('start_date','report_capcsd'),array('timezone' => 'America/Denver'));
     	$mform->setDefault('start_date', $start_date->getTimestamp());
-    	$mform->addElement('date_selector', 'end_date', get_string('end_date','report_capcsd'));
+    	$mform->addElement('date_selector', 'end_date', get_string('end_date','report_capcsd'),array('timezone' => 'America/Denver'));
     	$mform->addElement('text', 'pass_fail_percentage', get_string('pass_fail_percentage', 'report_capcsd'));
     	$mform->addElement('select', 'quiz_id', get_string('quiz_id', 'report_capcsd'), $module_options);
     	$mform->addElement('text', 'asha_course_number', get_string('asha_course_number', 'report_capcsd'));
